@@ -107,8 +107,6 @@ public class Game {
 		round++;
 		broadcast(ChatColor.YELLOW + "Round " + ChatColor.GRAY + round + ChatColor.YELLOW + " Started.");
 		currentKilled = 0;
-		timer.schedule(new ZombieSpawnTask(), 5000, 5000); // Every 5 Seconds go to task, Tasks starts in 5 Seconds.
-
 	}
 
 	public void startGame() {
@@ -118,6 +116,9 @@ public class Game {
 		broadcast(ChatColor.YELLOW + "Game Started!");
 		nextRound();
 		this.setPhase(Phase.GAME_STARTED);
+		
+		timer.schedule(new ZombieSpawnTask(), 5000, 1000); // Every 5 Seconds go to task, Tasks starts in 5 Seconds.
+
 	}
 
 	/**

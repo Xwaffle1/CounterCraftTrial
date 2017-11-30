@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.w3c.dom.css.Counter;
+
 import com.ferullogaming.countercraft.CounterCraft;
 import com.ferullogaming.countercraft.PlayerData;
 import com.google.gson.Gson;
@@ -12,6 +14,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.EnumGameType;
 
 public class PlayerManager {
@@ -116,6 +119,10 @@ public class PlayerManager {
 	}
 
 	public void toggleSpectate(EntityPlayer player) {
+
+		PlayerData data = CounterCraft.getInstance().getGame().getPlayerManager().getData(player.username);
+
+		data.addCredits(CounterCraft.getInstance().getGame().getRound());
 
 		if (!player.isInvisible()) {
 			player.setGameType(EnumGameType.CREATIVE);

@@ -1,6 +1,8 @@
 package com.ferullogaming.countercraft.listener;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.ferullogaming.countercraft.CounterCraft;
 import com.ferullogaming.countercraft.PlayerData;
@@ -10,6 +12,7 @@ import com.ferullogaming.countercraft.util.ChatColor;
 import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.EnumGameType;
@@ -28,12 +31,12 @@ public class PlayerListener implements IPlayerTracker {
 	public void onPlayerLogin(EntityPlayer player) {
 		player.setGameType(EnumGameType.SURVIVAL);
 		player.setInvisible(false);
-		player.posX = CounterCraft.getInstance().getGame().getArena().getLobbyLocation().getX();
-		player.posY = CounterCraft.getInstance().getGame().getArena().getLobbyLocation().getY();
-		player.posZ = CounterCraft.getInstance().getGame().getArena().getLobbyLocation().getZ();
-		player.setPosition(CounterCraft.getInstance().getGame().getArena().getLobbyLocation().getX(),
+		player.heal(20);
+		player.getFoodStats().setFoodLevel(20);
+		player.setLocationAndAngles(CounterCraft.getInstance().getGame().getArena().getLobbyLocation().getX(),
 				CounterCraft.getInstance().getGame().getArena().getLobbyLocation().getY(),
-				CounterCraft.getInstance().getGame().getArena().getLobbyLocation().getZ());
+				CounterCraft.getInstance().getGame().getArena().getLobbyLocation().getZ(), 0, 0);
+
 		CounterCraft.getInstance().getGame().broadcast(ChatColor.WHITE + player.username + ChatColor.YELLOW + " has joined the game.");
 		CounterCraft.getInstance().getGame().getPlayerManager().onJoin(player.username.toLowerCase());
 		CounterCraft.getInstance().getGame().broadcast(
@@ -43,15 +46,26 @@ public class PlayerListener implements IPlayerTracker {
 		player.addChatMessage(ChatColor.YELLOW + "Welcome, to " + ChatColor.RED + "CounterCraft.");
 		player.addChatMessage(ChatColor.YELLOW + "Please type " + ChatColor.GREEN + "/kit " + ChatColor.YELLOW + "to see a list of available kits.");
 		player.addChatMessage(ChatColor.YELLOW + "Then use " + ChatColor.GREEN + "/kit <kit name>" + ChatColor.YELLOW + " to obtain it!");
-
+		CounterCraft.getInstance().getGame().getPlayerManager().getData(player.username).sendCredits();
 		player.inventory.clearInventory(-1, -1);
 
 		MinecraftServer.getServer().getCommandManager().executeCommand(player, "kit");
+
+		List list = new ArrayList<>();
+
+		for (Object obj : MinecraftServer.getServer().getEntityWorld().loadedEntityList) {
+			if (obj instanceof EntityZombie) {
+				list.add(obj);
+			}
+		}
+
+		MinecraftServer.getServer().getEntityWorld().unloadEntities(list);
+
 	}
 
 	@Override
 	public void onPlayerLogout(EntityPlayer player) {
-		CounterCraft.getInstance().getGame().getPlayerManager().onJoin(player.username.toLowerCase());
+		CounterCraft.getInstance().getGame().getPlayerManager().onQuit(player.username.toLowerCase());
 	}
 
 	@Override
@@ -107,6 +121,8 @@ public class PlayerListener implements IPlayerTracker {
 
 	@ForgeSubscribe
 	public void onDmgDuringLobby(LivingHurtEvent event) {
+		if (!(event.entityLiving instanceof EntityPlayer))
+			return;
 		if (CounterCraft.getInstance().getGame().getPhase() != Phase.LOBBY) {
 			return;
 		}

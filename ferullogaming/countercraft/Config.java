@@ -45,13 +45,11 @@ public class Config {
 					CounterCraft.log("NULL ENTRY");
 				}
 				if (CounterCraft.getInstance() == null) {
-
+					
 				}
-
 				if (CounterCraft.getInstance().getGame() == null) {
 
 				}
-
 				CounterCraft.getInstance().getGame().getKits().add(new Kit(entry.getKey()));
 			}
 		} catch (JsonIOException e) {

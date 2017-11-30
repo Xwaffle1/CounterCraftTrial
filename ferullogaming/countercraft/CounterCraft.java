@@ -26,6 +26,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppedEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -120,6 +121,11 @@ public class CounterCraft {
 
 		MinecraftServer.getServer().executeCommand("kill @e[type=!Player]");
 
+	}
+
+	@EventHandler
+	public void onServerStop(FMLServerStoppedEvent event) {
+		CounterCraft.getInstance().getGame().getTimer().cancel();
 	}
 
 	/** Log information or anything counter craft related */

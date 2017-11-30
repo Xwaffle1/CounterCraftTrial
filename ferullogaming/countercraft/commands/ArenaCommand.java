@@ -8,7 +8,10 @@ import com.ferullogaming.countercraft.util.Location;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatMessageComponent;
 
@@ -61,6 +64,13 @@ public class ArenaCommand extends CommandBase {
 					break;
 				case "start":
 					CounterCraft.getInstance().getGame().countdownLobby();
+					break;
+				case "zombie":
+					EntityZombie zombie = new EntityZombie(MinecraftServer.getServer().getEntityWorld());
+					zombie.setPosition(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ);
+					MinecraftServer.getServer().getEntityWorld().spawnEntityInWorld(zombie);
+					zombie.setPosition(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ);
+					zombie.setLocationAndAngles(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, 0, 0);
 					break;
 				}
 			}

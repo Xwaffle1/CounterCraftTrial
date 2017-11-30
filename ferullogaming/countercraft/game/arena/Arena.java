@@ -43,7 +43,7 @@ public class Arena {
 	}
 
 	public int getMonsterLimit() {
-		return (10 * CounterCraft.getInstance().getGame().getRound()) * CounterCraft.getInstance().getGame().getArena().getSpawners().size();
+		return (10 * CounterCraft.getInstance().getGame().getRound());
 	}
 
 	public Location getLobbyLocation() {
@@ -59,20 +59,14 @@ public class Arena {
 	}
 
 	public void teleportPlayersToSpawn() {
-
 		List<PlayerData> data = CounterCraft.getInstance().getGame().getPlayerManager().getPlayerData();
-
 		for (PlayerData playerData : data) {
 			EntityPlayer player = playerData.getPlayer();
 			if (player != null) {
 				player.setPosition(this.getPlayerSpawn().getX(), this.getPlayerSpawn().getY(), this.getPlayerSpawn().getZ());
-				player.posX = this.getPlayerSpawn().getX();
-				player.posY = this.getPlayerSpawn().getY();
-				player.posZ = this.getPlayerSpawn().getZ();
-
+				player.setLocationAndAngles(getPlayerSpawn().getX(), getPlayerSpawn().getY(), getPlayerSpawn().getZ(), 0, 0);
 			}
 		}
-
 	}
 
 	public void removeSpawner(Location location) {

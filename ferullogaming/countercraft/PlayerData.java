@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.ferullogaming.countercraft.game.kits.Kit;
+import com.ferullogaming.countercraft.util.ChatColor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
@@ -18,6 +19,7 @@ import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatMessageComponent;
 
 public class PlayerData {
 
@@ -69,6 +71,39 @@ public class PlayerData {
 		return false;
 	}
 
+	public void buyKit(Kit kit) {
+		if (!this.hasKit(kit.kitKey)) {
+			this.takeCredits((int) kit.cost);
+
+			String[] tempKits = new String[this.kitsOwned.length + 1];
+
+			for (int i = 0; i < this.kitsOwned.length; i++) {
+				tempKits[i] = kitsOwned[i];
+			}
+			tempKits[this.kitsOwned.length] = kit.kitKey;
+
+			kitsOwned = tempKits;
+
+			EntityPlayer player = getPlayer();
+
+			if (player != null) {
+				player.sendChatToPlayer(ChatMessageComponent.createFromText(ChatColor.RED + "- " + kit.cost + ChatColor.GRAY + " Credits"));
+				player.sendChatToPlayer(ChatMessageComponent.createFromText(ChatColor.GREEN + "Purchased " + kit.kitName));
+				sendCredits();
+
+			}
+			save();
+		}
+	}
+
+	public void sendCredits() {
+		getPlayer().sendChatToPlayer(ChatMessageComponent.createFromText(ChatColor.GREEN + "Current Credits: " + ChatColor.YELLOW + "" + getCredits()));
+	}
+
+	private void save() {
+		CounterCraft.getInstance().getGame().getPlayerManager().saveData(username);
+	}
+
 	public PlayerData(String username) {
 		this.username = username;
 		File file = new File(CounterCraft.getInstance().folderLocation + File.separator + "playerData" + File.separator + username.toLowerCase() + ".json");
@@ -99,6 +134,21 @@ public class PlayerData {
 
 	public Kit getKit() {
 		return this.kit;
+	}
+
+	public void addCredits(int credits) {
+		this.credits += credits;
+		if (getPlayer() != null) {
+			getPlayer()
+					.sendChatToPlayer(ChatMessageComponent.createFromText(ChatColor.YELLOW + "+ " + ChatColor.GREEN + credits + ChatColor.GRAY + " Credits"));
+			sendCredits();
+		}
+		save();
+	}
+
+	public void takeCredits(int credits) {
+		this.credits -= credits;
+		save();
 	}
 
 }
