@@ -59,6 +59,8 @@ public class Game {
 
 	public void incrementCurrentKilled() {
 		currentKilled += 1;
+		this.broadcast(ChatColor.RED + ChatColor.BOLD.toString() + "SLAIN: " + ChatColor.RESET + ChatColor.YELLOW.toString() + currentKilled + ChatColor.GRAY
+				+ " / " + ChatColor.DARK_GRAY + "" + getArena().getMonsterLimit());
 	}
 
 	public int getRound() {
@@ -116,7 +118,7 @@ public class Game {
 		broadcast(ChatColor.YELLOW + "Game Started!");
 		nextRound();
 		this.setPhase(Phase.GAME_STARTED);
-		
+
 		timer.schedule(new ZombieSpawnTask(), 5000, 1000); // Every 5 Seconds go to task, Tasks starts in 5 Seconds.
 
 	}

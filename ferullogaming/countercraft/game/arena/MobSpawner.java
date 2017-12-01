@@ -33,6 +33,7 @@ public class MobSpawner {
 			EntityZombie zombie = iterator.next();
 			if (zombie.isDead) {
 				iterator.remove();
+				CounterCraft.getInstance().getGame().incrementCurrentKilled();
 			}
 		}
 	}
